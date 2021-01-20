@@ -22,13 +22,16 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+    - name: dotnet build and publish
+      run: |
+        dotnet restore
+        dotnet build --configuration Release
+        dotnet publish -c Release -o '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/myapp' 
 
-      - name: WebApp Deploy to AzureStack using publish profile
-        uses: azure/webapps-deploy@v2
-        with: 
+    - name: WebApp Deploy to AzureStack using publish profile
+      uses: azure/webapps-deploy@v2
+      with: 
           app-name: 'testwebapp2'
-          package: 'BaseOperations'
+          package: 'BaseOperations/myapp'
           publish-profile: ${{ secrets.AZURESTACK_WEBAPP_PUBLISHPROFILE }}
 
